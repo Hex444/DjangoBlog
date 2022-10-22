@@ -1,6 +1,9 @@
+from threading import _profile_hook
 from django.shortcuts import render,redirect
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdateForm
+import os
 
 def register(req):
     if req.method=='POST':
@@ -13,6 +16,34 @@ def register(req):
     else:
         form=UserRegistrationForm()
     return render(req,'users/register.html',{'form':form})
+
+@login_required
+def profile(req):
+    if req.method == 'POST':
+        u_form = UserUpdateForm(req.POST,instance=req.user)
+        p_form = ProfileUpdateForm(req.POST,
+                                   req.FILES,
+                                   instance=req.user.profile)
+        if u_form.is_valid() and p_form.is_valid():
+            # if p_form.image != req.user.profile.image:
+            #     os.remove(req.user.profile.image.url)
+            u_form.save()
+            p_form.save()
+            messages.success(req,f'Your accout has been updated')
+            return redirect('profile')
+    else:
+        u_form = UserUpdateForm(instance=req.user)
+        p_form = ProfileUpdateForm(instance=req.user.profile)
+
+    context = {
+        'u_form':u_form,
+        'p_form':p_form,
+    }
+    return render(req,'users/profile.html',context)
+
+
+
+
 
 '''
 messages.debug
