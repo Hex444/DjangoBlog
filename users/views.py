@@ -20,13 +20,13 @@ def register(req):
 @login_required
 def profile(req):
     if req.method == 'POST':
+        prev_image=req.user.profile.image.path
         u_form = UserUpdateForm(req.POST,instance=req.user)
         p_form = ProfileUpdateForm(req.POST,
                                    req.FILES,
                                    instance=req.user.profile)
         if u_form.is_valid() and p_form.is_valid():
-            # if p_form.image != req.user.profile.image:
-            #     os.remove(req.user.profile.image.url)
+            os.remove(prev_image)
             u_form.save()
             p_form.save()
             messages.success(req,f'Your accout has been updated')
