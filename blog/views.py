@@ -1,6 +1,6 @@
 from urllib import request
 from django.shortcuts import render,get_object_or_404
-from .models import Post
+from .models import Post,Comment
 from django.contrib.auth.models import User
 from django.views.generic import ListView,DetailView,DeleteView,CreateView,UpdateView
 from django.contrib.auth.decorators import login_required
@@ -66,6 +66,12 @@ class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
         if self.request.user == post.author:
             return True
         return False
+
+
+class CommentCreateView(LoginRequiredMixin,CreateView):
+    model=Comment
+    fields=['content']
+    template_name="blog/comment_create.html"
 
 def about(req):
     return render(req,'blog/about.html',{'title':'About'})
