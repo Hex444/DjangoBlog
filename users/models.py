@@ -3,9 +3,13 @@ from django.contrib.auth.models import User
 from PIL import Image
 import os
 
+
 class Profile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
     image=models.ImageField(default='default.jpg',upload_to='profile_pics')
+    schoolname=models.CharField(max_length=255,default='DPS RUBY PARK, KOLKATA')
+    grade=models.IntegerField()
+    
 
     def __str__(self):
         return f'{self.user.username} Profile'
